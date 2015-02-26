@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml" xmlns:jetty="http://www.mulesoft.org/schema/mule/jetty" xmlns:data-mapper="http://www.mulesoft.org/schema/mule/ee/data-mapper" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.6.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/data-mapper http://www.mulesoft.org/schema/mule/ee/data-mapper/current/mule-data-mapper.xsd
+http://www.mulesoft.org/schema/mule/jetty http://www.mulesoft.org/schema/mule/jetty/current/mule-jetty.xsd
+http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8080" basePath="/vacation" doc:name="HTTP Listener Configuration"/>
+    <data-mapper:config name="JSON_To_XML" transformationGraphPath="json_to_xml.grf" doc:name="JSON_To_XML"/>
+    <http:request-config name="HTTP_Request_Configuration" host="api.openweathermap.org" port="80" doc:name="HTTP Request Configuration"/>
+    <data-mapper:config name="XML_To_XML" transformationGraphPath="xml_to_xml.grf" doc:name="XML_To_XML"/>
+    <jms:activemq-connector name="Active_MQ" brokerURL="tcp://localhost:61616" validateConnections="true" doc:name="Active MQ" specification="1.1"/>
+    <flow name="vacation-muleFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/" doc:name="HTTP">
+            <http:response-builder statusCode="200"/>
+        </http:listener>  
+        <data-mapper:transform config-ref="JSON_To_XML" doc:name="JSON To XML"/>
+         <logger message="Nach HTTP Choice #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Workaround byte -&gt;"/>
+        <set-variable variableName="name" value="#[xpath3('/request/name')]" doc:name="setName"/>
+        <set-variable variableName="city" value="#[xpath3('/request/city')]" doc:name="setCity"/>
+        <logger message="#[flowVars.name] wants to go to #[flowVars.city]" level="INFO" doc:name="Logger"/>
+        <http:request config-ref="HTTP_Request_Configuration" path="/data/2.5/find" method="GET" doc:name="openweathermap.org">
+            <http:request-builder>
+                <http:query-param paramName="q" value="#[xpath3('/request/city')]"/>
+                <http:query-param paramName="units" value="metric"/>
+                <http:query-param paramName="mode" value="xml"/>
+            </http:request-builder>
+        </http:request>      
+        <mulexml:xslt-transformer xsl-file="src/main/resources/copy.xsl" maxIdleTransformers="2" maxActiveTransformers="5" doc:name="Workaround"/>        
+        <set-variable variableName="count" value="#[xpath3('//count')]" doc:name="setCount"/>
+        <response>
+            <choice doc:name="Choice">
+                <when expression="#[flowVars.count != 1]">
+                    <set-payload value="{ 'message' : 'city not found' }" doc:name="Set Payload"/>
+                </when>
+                <when expression="#[xpath3('//temp &gt; 20')]">
+                    <jms:outbound-endpoint queue="beach" connector-ref="Active_MQ" doc:name="JMS"/>
+                    <set-payload value="{ 'message' : 'Enjoy the sun!' }" doc:name="Set Payload"/>
+                </when>
+                <otherwise>
+                    <jms:outbound-endpoint queue="ski" connector-ref="Active_MQ" doc:name="JMS"/>
+                    <set-payload value="{ 'message' : 'You go skiing!' }" doc:name="Set Payload"/>
+                </otherwise>
+            </choice>
+        </response>
+         <data-mapper:transform doc:name="XML To XML" config-ref="XML_To_XML">
+            <data-mapper:input-arguments>
+                <data-mapper:input-argument key="name">#[flowVars.name]</data-mapper:input-argument>
+            </data-mapper:input-arguments>
+        </data-mapper:transform>
+        
+       
+    </flow>
+    
+</mule>
