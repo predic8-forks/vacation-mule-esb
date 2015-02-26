@@ -33,7 +33,9 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
                 <http:query-param paramName="mode" value="xml"/>
             </http:request-builder>
         </http:request>      
-        <mulexml:xslt-transformer xsl-file="src/main/resources/copy.xsl" maxIdleTransformers="2" maxActiveTransformers="5" doc:name="Workaround"/>        
+        <!-- Without the dummy (copy) XSLT transformation that does nothing the following xpath statement is executed against the payload before the 
+        weathermap was called -> count is null -->
+        <mulexml:xslt-transformer xsl-file="src/main/resources/copy.xsl" maxIdleTransformers="2" maxActiveTransformers="5" doc:name="Workaround"/>       
         <set-variable variableName="count" value="#[xpath3('//count')]" doc:name="setCount"/>
         <response>
             <choice doc:name="Choice">
