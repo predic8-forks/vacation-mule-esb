@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="cities" type="citiesType"/>
+  <xs:complexType name="cityType">
+    <xs:sequence>
+      <xs:element type="coordType" name="coord"/>
+      <xs:element type="xs:string" name="country"/>
+      <xs:element type="sunType" name="sun"/>
+    </xs:sequence>
+    <xs:attribute type="xs:int" name="id"/>
+    <xs:attribute type="xs:string" name="name"/>
+  </xs:complexType>
+  <xs:complexType name="weatherType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:short" name="number"/>
+        <xs:attribute type="xs:string" name="value"/>
+        <xs:attribute type="xs:string" name="icon"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="temperatureType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:float" name="value"/>
+        <xs:attribute type="xs:float" name="min"/>
+        <xs:attribute type="xs:float" name="max"/>
+        <xs:attribute type="xs:string" name="unit"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="itemType">
+    <xs:sequence>
+      <xs:element type="cityType" name="city"/>
+      <xs:element type="temperatureType" name="temperature"/>
+      <xs:element type="humidityType" name="humidity"/>
+      <xs:element type="pressureType" name="pressure"/>
+      <xs:element type="windType" name="wind"/>
+      <xs:element type="cloudsType" name="clouds"/>
+      <xs:element type="precipitationType" name="precipitation"/>
+      <xs:element type="weatherType" name="weather"/>
+      <xs:element type="lastupdateType" name="lastupdate"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="humidityType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:byte" name="value"/>
+        <xs:attribute type="xs:string" name="unit"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="citiesType">
+    <xs:sequence>
+      <xs:element type="xs:float" name="calctime"/>
+      <xs:element type="xs:byte" name="count"/>
+      <xs:element type="xs:string" name="mode"/>
+      <xs:element type="listType" name="list"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="listType">
+    <xs:sequence>
+      <xs:element type="itemType" name="item"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sunType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:dateTime" name="rise"/>
+        <xs:attribute type="xs:dateTime" name="set"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="coordType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:float" name="lon"/>
+        <xs:attribute type="xs:float" name="lat"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="directionType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:float" name="value"/>
+        <xs:attribute type="xs:string" name="code"/>
+        <xs:attribute type="xs:string" name="name"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="precipitationType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="mode"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="pressureType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:float" name="value"/>
+        <xs:attribute type="xs:string" name="unit"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="speedType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:float" name="value"/>
+        <xs:attribute type="xs:string" name="name"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="lastupdateType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:dateTime" name="value"/>
+        <xs:attribute type="xs:int" name="unix"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="windType">
+    <xs:sequence>
+      <xs:element type="speedType" name="speed"/>
+      <xs:element type="directionType" name="direction"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="cloudsType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:byte" name="value"/>
+        <xs:attribute type="xs:string" name="name"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+</xs:schema>
