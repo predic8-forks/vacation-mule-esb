@@ -56,9 +56,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
             <data-mapper:input-arguments>
                 <data-mapper:input-argument key="name">#[flowVars.name]</data-mapper:input-argument>
             </data-mapper:input-arguments>
-        </data-mapper:transform>
-        
-       
+        </data-mapper:transform>       
     </flow>
     
 </mule>
