@@ -4,10 +4,10 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.predic8</groupId>
-	<artifactId>vacation-mule-maven</artifactId>
-	<version>0.2-SNAPSHOT</version>
+	<artifactId>vacation-mule-esb</artifactId>
+	<version>0.1-SNAPSHOT</version>
 	<packaging>mule</packaging>
-	<name>Mule vacation-mule-maven Application</name>
+	<name>Vacation Integration Sample realized using Mule ESB</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
